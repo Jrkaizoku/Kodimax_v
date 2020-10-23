@@ -181,5 +181,51 @@ namespace Kodimax
             } while (key.Key != ConsoleKey.Enter);
             return y;
         }
+        public int updateMenu(int yInitial, int count, string type)
+        {
+            Console.SetCursorPosition(0, 3);
+            Console.WriteLine("->>");
+            Console.SetCursorPosition(60, 3);
+            Console.WriteLine("- Mueva con las flechas arriba y abajo");
+            Console.SetCursorPosition(60, 4);
+            Console.WriteLine("- Presione ENTER sobre la {0} a modificar", type);
+            Console.SetCursorPosition(60, 5);
+            Console.WriteLine("- Presione ENTER sobre AGREGAR para agregar");
+            Console.SetCursorPosition(60, 6);
+            Console.WriteLine("- Presione ENTER sobre SALIR para salirse");
+            ConsoleKeyInfo key;
+            Console.SetCursorPosition(0, count + 3);
+            Console.Write("     {0}  Agregar", count + 1);
+
+            Console.SetCursorPosition(0, count + 4);
+            Console.Write("     {0}  Salir", count + 2);
+            int y = 3;
+            do
+            {
+                key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.DownArrow)
+                {
+                    Console.SetCursorPosition(0, y);
+                    Console.Write("   ");
+                    y++;
+                    if (y > count + yInitial) y = 3;
+                    Console.SetCursorPosition(0, y);
+                    Console.WriteLine("->>");
+
+                }
+                if (key.Key == ConsoleKey.UpArrow)
+                {
+                    Console.SetCursorPosition(0, y);
+                    Console.Write("   ");
+                    y--;
+                    if (y < 3) y = count + yInitial;
+                    Console.SetCursorPosition(0, y);
+                    Console.WriteLine("->>");
+                    if (y > count + yInitial) y = 3;
+                }
+
+            } while (key.Key != ConsoleKey.Enter);
+            return y;
+        }
     }
 }

@@ -11,15 +11,19 @@ namespace Kodimax
         public List<User> users;
         public List<Movie> movies;      
         public List<Snack> snacks;
+        public List<Subsidiary> subsidiaries;
         User user = new User("Jenniffer","Granados","Admin", "admin", 0);
         User user4 = new User("Jenniffer", "Granados", "Admin1", "admin1", 1);
         User user2 = new User("Barrons", "admin2020", 2);
         User user3 = new User("admin-max", "@dminM@x", 0);
         public int[] userArray = new int[10];
-
-
+        private Subsidiary subsidiary=new Subsidiary("REFORMA","San Salvador");
+        private Subsidiary subsidiary2 = new Subsidiary("PLAZA MUNDO","Soyapango");
+        private Subsidiary subsidiary3 = new Subsidiary("LA GRAN VIA","C. Merliot");
+     
         public Cinema()
         {
+            subsidiaries = new List<Subsidiary>();
             users = new List<User>();
             movies = new List<Movie>();
             snacks = new List<Snack>();
@@ -39,12 +43,20 @@ namespace Kodimax
             AddUser(user2);
             AddUser(user3);
             AddUser(user4);
+            AddSubsidiary(subsidiary);
+            AddSubsidiary(subsidiary3);
+            AddSubsidiary(subsidiary2);
 
 
         }
         public void AddUser(User user) {
             users.Add(user);
             
+        }
+        public void AddSubsidiary(Subsidiary subs)
+        {
+            subsidiaries.Add(subs);
+
         }
         public bool ValidateUser(string user, string password) {
             bool login = false;
@@ -100,6 +112,25 @@ namespace Kodimax
                 Console.WriteLine(movie.Type);
                 y++;
                 
+            }
+        }
+        public void ShowSubsidiary()
+        {
+            Console.WriteLine("     Listado de Sucursales");
+            Console.WriteLine("     ID\tNombre\t\t   Ciudad");
+            Console.WriteLine("     -------------------------------------");
+            int y = 3;
+            foreach (Subsidiary sub in subsidiaries)
+            {
+                Console.SetCursorPosition(5, y);
+                Console.WriteLine(y - 2);
+                Console.SetCursorPosition(8, y);
+                Console.WriteLine(sub.Name);
+                Console.SetCursorPosition(28, y);
+                Console.WriteLine(sub.City);
+
+                y++;
+
             }
         }
         public void ShowSnack() {

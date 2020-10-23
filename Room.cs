@@ -208,7 +208,7 @@ namespace Kodimax
             return room[i, j] == 0;
         }
         public void printComprados() {
-            Console.SetCursorPosition(5, 8);
+            Console.SetCursorPosition(5, 9);
             Console.Write("| Asientos: ");
             for (int i = 0; i < index; i++)
                 Console.Write("{0}, ", comprados[i]);

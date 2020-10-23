@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Autocine.cs" />
     <Compile Include="Cinema.cs" />
     <Compile Include="Menus.cs" />
     <Compile Include="Movie.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="Snack.cs" />
+    <Compile Include="Subsidiary.cs" />
     <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
