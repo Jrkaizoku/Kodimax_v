@@ -15,6 +15,7 @@ namespace Kodimax
         static Cinema cinema = new Cinema();
         static Menus menus = new Menus();
         static Random random = new Random();
+        static int idSub;
         static void Main(string[] args)
         {
             string users="", password="";
@@ -66,7 +67,6 @@ namespace Kodimax
             
         }
 
-    
         static void CheckIn()
         {
 
@@ -120,7 +120,7 @@ namespace Kodimax
         }
         static void MenuCustomer(string users) {
             int option_menu;
-            string[] menu1 = { "Ver Cartelera", "Ver Tienda", "Comprar Boletos", "Comprar Golosinas", "Logout" };
+            string[] menu1 = { "Ver Cartelera", "Ver Tienda", "Ver sucursales", "Comprar Boletos", "Comprar Golosinas", "Logout" };
             Console.Clear();          
             do{
                 option_menu = menus.MenuInitial(menu1, "Bienvenido " + users + " - Usuario cliente");
@@ -131,9 +131,12 @@ namespace Kodimax
                     case 2: cinema.ShowSnack();
                         break;
                     case 3:
-                        BuyMovieTicket();
+                        cinema.ShowSubsidiary();
                         break;
                     case 4:
+                        BuyMovieTicket();
+                        break;
+                    case 5:
                         BuySnack();
                         break;
                 }
@@ -147,11 +150,27 @@ namespace Kodimax
         static void BuyMovieTicket() {
             int id, room,y=4;
             double MovieTicket = 0,money;
+            string mod;
             DateTime dateTime = DateTime.Now;
 
             Console.Clear();
-            Console.WriteLine("     Bienvenido a la compra de Boletos");
-            Console.Write("\n     Por favor Digite el ID de la pelicula: ");
+            Console.WriteLine("   Bienvenido a la compra de Boletos - KODIMAX  ");
+            //=============== Surcursal ==============================
+            Console.SetCursorPosition(0, 2);
+            Console.Write("     Por favor Digite el ID de la Sucursal: ");
+            do
+            {
+                Console.SetCursorPosition(44, 2);
+                Console.WriteLine("     ");
+                Console.SetCursorPosition(44, 2);
+                idSub = int.Parse(Console.ReadLine());
+            } while (idSub < 1 || idSub > cinema.subsidiaries.Count);
+
+            Console.SetCursorPosition(47, 0);
+            Console.Write(cinema.subsidiaries[idSub-1].Name);
+            //========================================================
+            Console.SetCursorPosition(0, 2);
+            Console.Write("     Por favor Digite el ID de la pelicula: ");
             do {
                 Console.SetCursorPosition(44, 2);
                 Console.WriteLine("     ");
@@ -164,59 +183,66 @@ namespace Kodimax
             Console.WriteLine("     Nombre: {0}", cinema.movies[id - 1].Name);
             Console.WriteLine("     Tipo: {0}", cinema.movies[id - 1].Type);
             Console.WriteLine("     Duracion: {0}", cinema.movies[id - 1].Duration);
-            Console.SetCursorPosition(33, 2);
-            Console.WriteLine("Digite la sala:");
-            Console.SetCursorPosition(36, 3);
-            Console.WriteLine("1. Estandar");
-            Console.SetCursorPosition(36, 4);
-            Console.WriteLine("2. Premium");
-            Console.SetCursorPosition(36, 5);
-            Console.WriteLine("3. VIP");
-            do {
-                Console.SetCursorPosition(52, 2);
-                Console.WriteLine("    ");
-                Console.SetCursorPosition(52, 2);
-                room = int.Parse(Console.ReadLine());
-            } while (room<1||room>3);
 
+            //********** Modalidad *********************
+            Console.SetCursorPosition(33, 2);
+            Console.WriteLine("Digite la Modalidad:");
+            Console.SetCursorPosition(36, 3);
+            Console.WriteLine("1. Autocine");
             Console.SetCursorPosition(36, 4);
-            Console.WriteLine("            ");
-            Console.SetCursorPosition(36, 5);
-            Console.WriteLine("           ");
+            Console.WriteLine("2. Sala de cine");
+            do
+            {
+                Console.SetCursorPosition(54, 2);
+                Console.WriteLine("    ");
+                Console.SetCursorPosition(54, 2);
+                room = int.Parse(Console.ReadLine());
+            } while (room < 1 || room > 2);
             switch (room)
             {
                 case 1:
-                    MovieTicket = Standard();
+                    MovieTicket = RoomCine(1);
                     break;
                 case 2:
-                    MovieTicket = Premium();
+                    MovieTicket = RoomCine(0);
                     break;
-                case 3:
-                    MovieTicket = VIP();
-                    break;
+               
             }
-            Console.SetCursorPosition(0,0);
-            Console.WriteLine("                       TICKET DE COMPRA - CINE KODIMAX");
+
+            if (room == 1) mod="Autocine";
+            else mod="Sala de cine";
+            //*******************************************
+
+
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("                    TICKET DE COMPRA - CINE KODIMAX {0}",cinema.subsidiaries[idSub-1].Name);
             Console.WriteLine("     |¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|");
             Console.WriteLine("     | Detalle de Funcion                                                |");
             Console.WriteLine("     |-------------------------------------------------------------------|");
+            Console.WriteLine("     | Modalidad: {0}",mod);
             Console.WriteLine("     | ID: {0}", cinema.movies[id - 1].IDMovie);
             Console.WriteLine("     | Nombre: {0}", cinema.movies[id - 1].Name);
             Console.WriteLine("     | Tipo: {0}", cinema.movies[id - 1].Type);
-            Console.WriteLine("     | Duracion: {0}", cinema.movies[id - 1].Duration);
+            Console.WriteLine("     | Duracion: {0}   ", cinema.movies[id - 1].Duration);
+          
+            
+            Console.SetCursorPosition(5, 8);
+            Console.Write("|");
+            Console.SetCursorPosition(5, 9);
+            Console.Write("|");
             Console.SetCursorPosition(35, 2);
             Console.WriteLine("Detalle de Compra");
             do
             {
                 id = random.Next(cinema.users.Count);
             } while (cinema.users[id].Id != 1);
-            Console.SetCursorPosition(0, 9);
+            Console.SetCursorPosition(0, 10);
             Console.WriteLine("     |-------------------------------------------------------------------|");
             Console.WriteLine("     | Detalles empleado");
             Console.WriteLine("     | ID: {0}   Nombre: {1} {2}", id, cinema.users[id].Name, cinema.users[id].Surname );
             Console.WriteLine("     |                                              {0}", dateTime);
             Console.WriteLine("      ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 10; i++)
             {
                 Console.SetCursorPosition(73, y);
                 Console.WriteLine("|");
@@ -239,12 +265,67 @@ namespace Kodimax
 
 
         }
-        static double Standard() {
+        
+        static double RoomCine(int type) {
+            int room;
+            double MovieTicket = 0,priceS,PriceP,priceV;
+            if (type == 0)
+            {
+                priceS = cinema.movies[0].roomStandar.Price;
+                PriceP = cinema.movies[0].roomPremium.Price;
+                priceV = cinema.movies[0].roomVIP.Price;
+            }
+            else {
+                priceS = cinema.movies[0].autocineS._price;
+                PriceP = cinema.movies[0].autocineP._price;
+                priceV = cinema.movies[0].autocineV._price;
+            }
+            Console.SetCursorPosition(33, 2);
+            Console.WriteLine("Digite la sala:");
+            Console.SetCursorPosition(36, 3);
+            Console.WriteLine("1. Estandar - ${0}",priceS);
+            Console.SetCursorPosition(36, 4);
+            Console.WriteLine("2. Premium - ${0}",PriceP);
+            Console.SetCursorPosition(36, 5);
+            Console.WriteLine("3. VIP - ${0}",priceV);
+            do
+            {
+                Console.SetCursorPosition(48, 2);
+                Console.WriteLine("        ");
+                Console.SetCursorPosition(50, 2);
+                room = int.Parse(Console.ReadLine());
+            } while (room < 1 || room > 3);
+
+            Console.SetCursorPosition(36, 4);
+            Console.WriteLine("                  ");
+            Console.SetCursorPosition(36, 5);
+            Console.WriteLine("                  ");
+            switch (room)
+            {
+                case 1:
+                    MovieTicket = Standard(type,priceS);
+                    break;
+                case 2:
+                    MovieTicket = Premium(type,PriceP);
+                    break;
+                case 3:
+                    MovieTicket = VIP(type,priceV);
+                    break;
+            }
+            return MovieTicket;
+        }
+        static double Standard(int type,double price) {
             int boletos=0;
             double subTotal;
-            cinema.movies[0].roomStandar.PrintRoom(5, 7);
+            int disponibles;
+            if (type == 0)
+            {
+                cinema.movies[0].roomStandar.PrintRoom(5, 7);
+                disponibles = cinema.movies[0].roomStandar.Disponibles;
+            }
+            else disponibles = cinema.movies[0].autocineS._available;
+
             Console.SetCursorPosition(33, 2);
-            int disponibles = cinema.movies[0].roomStandar.Disponibles;
             Console.Write("Boletos Disponibles: {0}", disponibles);
             if (disponibles > 0)
             {
@@ -258,36 +339,55 @@ namespace Kodimax
                     boletos = int.Parse(Console.ReadLine());
                 } while (boletos < 1 || boletos > disponibles);
 
-                cinema.movies[0].roomStandar.MoveCursor(8, 7, boletos);
-                cinema.movies[0].roomStandar.printComprados();
+                if (type == 0)
+                {
+                    cinema.movies[0].roomStandar.MoveCursor(8, 7, boletos);
+                    cinema.movies[0].roomStandar.printComprados();
+                }
+                else Console.Clear();
             }
             else {
                 Console.SetCursorPosition(33, 3);
                 Console.Write("Boletos para la sala Estandar agotados!!!!!");
             }
-            subTotal = cinema.movies[0].roomStandar.Price * boletos;
+            subTotal = price * boletos;
             subTotal = Math.Round(subTotal, 2);
             Console.SetCursorPosition(5, 7);
-            Console.WriteLine("Sala: Estandar");
-            Console.SetCursorPosition(35, 3);
-            Console.WriteLine("N° de entradas: {0}", boletos);
+            if (type == 0)
+                Console.WriteLine("Sala: Estandar");
+            else Console.WriteLine("Autocine: Estandar");
             Console.SetCursorPosition(35, 4);
-            Console.WriteLine("Precio: ${0}", cinema.movies[0].roomStandar.Price);
+            Console.WriteLine("N° de entradas: {0}", boletos);
             Console.SetCursorPosition(35, 5);
-            Console.WriteLine("Subtotal: ${0}", subTotal);
-            Console.SetCursorPosition(35, 6);
-            Console.WriteLine("TAX: ${0}", Math.Round((subTotal) * 0.3533));
+            Console.WriteLine("Precio: ${0}", price);
+            if (type != 0) {
+                Console.SetCursorPosition(35, 6);
+                Console.WriteLine("Parqueo: ${0}", cinema.movies[0].autocineS._parking);
+                subTotal += cinema.movies[0].autocineS._parking;
+            }
             Console.SetCursorPosition(35, 7);
+            Console.WriteLine("Subtotal: ${0}", subTotal);
+            Console.SetCursorPosition(35, 8);
+            Console.WriteLine("TAX: ${0}", Math.Round((subTotal) * 0.3533));
+            Console.SetCursorPosition(35, 9);
             Console.WriteLine("Total: ${0}", Math.Round(((subTotal) * 0.3533) + subTotal));
             return Math.Round(((subTotal) * 0.3533) + subTotal);
         }
-        static double Premium()
+        static double Premium(int type, double price)
         {
             int boletos=0;
             double subTotal;
-            cinema.movies[0].roomPremium.PrintRoom(5, 7);
+            int disponibles;
+
+            
+            if (type == 0)
+            {
+                cinema.movies[0].roomPremium.PrintRoom(5, 7);
+                disponibles = cinema.movies[0].roomPremium.Disponibles;
+            }
+            else disponibles = cinema.movies[0].autocineP._available;
+
             Console.SetCursorPosition(33, 2);
-            int disponibles = cinema.movies[0].roomPremium.Disponibles;
             Console.Write("Boletos Disponibles: {0}", disponibles);
             if (disponibles > 0)
             {
@@ -300,38 +400,51 @@ namespace Kodimax
                     Console.SetCursorPosition(54, 3);
                     boletos = int.Parse(Console.ReadLine());
                 } while (boletos < 1 || boletos > disponibles);
-
-                cinema.movies[0].roomPremium.MoveCursor(8, 7, boletos);
-                cinema.movies[0].roomPremium.printComprados();
+                if (type == 0)
+                {
+                    cinema.movies[0].roomPremium.MoveCursor(8, 7, boletos);
+                    cinema.movies[0].roomPremium.printComprados();
+                }
+                else Console.Clear();
             }
             else
             {
                 Console.SetCursorPosition(33, 3);
                 Console.Write("Boletos para la sala Premium agotados!!!!!");
             }
-            subTotal = cinema.movies[0].roomPremium.Price * boletos;
+            subTotal = price * boletos;
             subTotal = Math.Round(subTotal, 2);
             Console.SetCursorPosition(5, 7);
             Console.WriteLine("Sala: Premium");
-            Console.SetCursorPosition(35, 3);
-            Console.WriteLine("N° de entradas: {0}", boletos);
             Console.SetCursorPosition(35, 4);
-            Console.WriteLine("Precio: ${0}", cinema.movies[0].roomPremium.Price);           
+            Console.WriteLine("N° de entradas: {0}", boletos);
             Console.SetCursorPosition(35, 5);
-            Console.WriteLine("Subtotal: ${0}", subTotal);
-            Console.SetCursorPosition(35, 6);
-            Console.WriteLine("TAX: ${0}", Math.Round((subTotal) * 0.3533));
+            Console.WriteLine("Precio: ${0}", price);
+            if (type != 0)
+            {
+                Console.SetCursorPosition(35, 6);
+                Console.WriteLine("Parqueo: ${0}", cinema.movies[0].autocineP._parking);
+                subTotal += cinema.movies[0].autocineP._parking;
+            }
             Console.SetCursorPosition(35, 7);
+            Console.WriteLine("Subtotal: ${0}", subTotal);
+            Console.SetCursorPosition(35, 8);
+            Console.WriteLine("TAX: ${0}", Math.Round((subTotal) * 0.3533));
+            Console.SetCursorPosition(35, 9);
             Console.WriteLine("Total: ${0}", Math.Round(((subTotal) * 0.3533) + subTotal));
             return Math.Round(((subTotal) * 0.3533) + subTotal);
         }
-        static double VIP()
+        static double VIP(int type, double price)
         {
-            int boletos=0;
+            int boletos=0,disponibles;
             double subTotal;
-            cinema.movies[0].roomVIP.PrintRoom(5, 7);
+            if (type == 0)
+            {
+                cinema.movies[0].roomVIP.PrintRoom(5, 7);
+                disponibles = cinema.movies[0].roomVIP.Disponibles;
+            }
+            else disponibles = cinema.movies[0].autocineV._available;
             Console.SetCursorPosition(33, 2);
-            int disponibles = cinema.movies[0].roomVIP.Disponibles;
             Console.Write("Boletos Disponibles: {0}", disponibles);
             if (disponibles > 0)
             {
@@ -344,27 +457,37 @@ namespace Kodimax
                     Console.SetCursorPosition(54, 3);
                     boletos = int.Parse(Console.ReadLine());
                 } while (boletos < 1 || boletos > disponibles);
+                if (type == 0)
+                {
+                    cinema.movies[0].roomVIP.MoveCursor(8, 7, boletos);
+                    cinema.movies[0].roomVIP.printComprados();
+                }
+                else Console.Clear();
 
-                cinema.movies[0].roomVIP.MoveCursor(8, 7, boletos);
-                cinema.movies[0].roomVIP.printComprados();
             }
             else {
                 Console.SetCursorPosition(33, 3);
                 Console.Write("Boletos para la sala VIP agotados!!!!!");
             }
-            subTotal = cinema.movies[0].roomVIP.Price * boletos;
+            subTotal = price * boletos;
             subTotal = Math.Round(subTotal, 2);
             Console.SetCursorPosition(5, 7);
             Console.WriteLine("Sala: VIP");
-            Console.SetCursorPosition(35, 3);
-            Console.WriteLine("N° de entradas: {0}", boletos);
             Console.SetCursorPosition(35, 4);
-            Console.WriteLine("Precio: ${0}", cinema.movies[0].roomVIP.Price);
+            Console.WriteLine("N° de entradas: {0}", boletos);
             Console.SetCursorPosition(35, 5);
-            Console.WriteLine("Subtotal: ${0}", subTotal);
-            Console.SetCursorPosition(35, 6);
-            Console.WriteLine("TAX: ${0}", Math.Round((subTotal) * 0.3533));
+            Console.WriteLine("Precio: ${0}", price);
+            if (type != 0)
+            {
+                Console.SetCursorPosition(35, 6);
+                Console.WriteLine("Parqueo: ${0}", cinema.movies[0].autocineV._parking);
+                subTotal += cinema.movies[0].autocineV._parking;
+            }
             Console.SetCursorPosition(35, 7);
+            Console.WriteLine("Subtotal: ${0}", subTotal);
+            Console.SetCursorPosition(35, 8);
+            Console.WriteLine("TAX: ${0}", Math.Round((subTotal) * 0.3533));
+            Console.SetCursorPosition(35, 9);
             Console.WriteLine("Total: ${0}", Math.Round(((subTotal) * 0.3533) + subTotal));
             return Math.Round(((subTotal) * 0.3533) + subTotal);
         }
@@ -437,7 +560,7 @@ namespace Kodimax
         }
         static void MenuEmployee(string users) {
             int option_menu;
-            string[] menu1 = { "Modificar Cartelera", "Modificar Tienda", "Logout" };
+            string[] menu1 = { "Modificar Cartelera", "Modificar Tienda", "Modificar Sucursales","Modificar Autocine", "Logout" };
             Console.Clear();
             do
             {
@@ -449,7 +572,14 @@ namespace Kodimax
                         break;
                     case 2:
                         Candy(users);
-                        break;                  
+                        break;
+                    case 3:
+                        subsidiaryMenu(users);
+                        break;
+                    case 4:
+                        AutocineMenu();
+                        break;
+
 
                 }
                 Console.WriteLine("Presione cualquier tecla para Terminar...");
@@ -601,7 +731,7 @@ namespace Kodimax
         }
         static void MenuAdmin(string users) {
             int option_menu;
-            string[] menu1 = { "Crear/Eliminar empleados ", "Modificar Cartelera", "Modificar Tienda", "Reportes", "Logout" };
+            string[] menu1 = { "Crear/Eliminar empleados ", "Modificar Cartelera", "Modificar Tienda", "Modificar Sucursal", "Modificar Autocine", "Reportes", "Logout" };
             Console.Clear();
             do
             {
@@ -618,6 +748,12 @@ namespace Kodimax
                         Candy(users);
                         break;
                     case 4:
+                        subsidiaryMenu(users);
+                        break;
+                    case 5:
+                        AutocineMenu();
+                        break;
+                    case 6:
                         GenerateJson();
                         break;
 
@@ -648,7 +784,7 @@ namespace Kodimax
             char option;
             string json;
             Console.WriteLine("     Generar Reportes");
-            Console.WriteLine("     ---------------------------");
+            Console.WriteLine("     ---------------------------");      
             Console.WriteLine("     Opciones");
             Console.WriteLine("      U - Usuarios");
             Console.WriteLine("      G - Golosinas");
@@ -676,10 +812,86 @@ namespace Kodimax
                     break;
 
             }
-            
 
             Console.WriteLine("     Reporte generado en  {0}", fullPath);
             Console.ReadKey();
         }
+        static void subsidiaryMenu(string users) {
+            int y;
+            int option_menu;
+            string[] menu1 = { "Agregar", "Modificar Sucursal", "Salir" };
+            do
+            {
+                Console.Clear();
+                option_menu = menus.MenuInitial(menu1, "Bienvenido " + users + " - Usuario Empleado");
+
+                if (option_menu == 1)
+                {
+                    Console.Clear();
+                    Subsidiary sub  = new Subsidiary();
+                    Console.WriteLine("     Agregar Sucursal");
+                    Console.WriteLine("     ----------------------");
+                    Console.WriteLine("     Nombre:\n");
+                    Console.WriteLine("     Ciudad: \n");
+                
+                    Console.SetCursorPosition(14, 2);
+                    sub.Name = Console.ReadLine();
+                    Console.SetCursorPosition(15, 4);
+                    sub.City = Console.ReadLine();
+                    cinema.AddSubsidiary(sub);
+                }
+
+                if (option_menu == 2)
+                {
+                    Console.Clear();
+                    int id;
+                    Console.WriteLine("     Modificar Sucursal");
+                    Console.WriteLine("     ----------------------");
+                    Console.Write("     Digite id de la Sucursal: ");
+                    do
+                    {
+                        Console.SetCursorPosition(31, 2);
+                        Console.Write("     ");
+                        Console.SetCursorPosition(31, 2);
+                        id = int.Parse(Console.ReadLine());
+                    } while (id > cinema.subsidiaries.Count || id < 1);                  
+                    Console.WriteLine("     Nombre: ");
+                    Console.WriteLine("     Ciudad: ");
+                
+
+                    Console.SetCursorPosition(13, 3);
+                    cinema.subsidiaries[id - 1].Name = Console.ReadLine();
+                    Console.SetCursorPosition(13, 4);
+                    cinema.subsidiaries[id - 1].City = Console.ReadLine();
+                    Console.SetCursorPosition(5, 8);
+                    Console.Write("Presiona cualquier tecla para continuar...");
+                }
+
+            } while (option_menu != 3);
+        }
+        static void AutocineMenu()
+        {
+            Console.Clear();
+            int id;
+            Console.WriteLine("     Modificar Autocine");
+            Console.WriteLine("     ----------------------");
+            Console.Write("     Digite id de la pelicula: ");
+            id = int.Parse(Console.ReadLine());
+            Console.WriteLine("     Sala Estandar\n");
+            Console.WriteLine("     Precio: \n");
+            Console.WriteLine("     Sala Premium\n");
+            Console.WriteLine("     Precio: \n");
+            Console.WriteLine("     Sala VIP\n");
+            Console.WriteLine("     Precio: \n");
+            Console.SetCursorPosition(14, 5);
+            cinema.movies[id - 1].autocineS._price = Convert.ToDouble(Console.ReadLine());
+            Console.SetCursorPosition(14, 9);
+            cinema.movies[id - 1].autocineS._price = Convert.ToDouble(Console.ReadLine());
+            Console.SetCursorPosition(14, 13);
+            cinema.movies[id - 1].autocineS._price = Convert.ToDouble(Console.ReadLine());
+            Console.SetCursorPosition(5, 15);
+            Console.Write("Presiona cualquier tecla para continuar...");
+        }
     }
+    
 }

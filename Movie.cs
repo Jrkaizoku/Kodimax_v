@@ -15,6 +15,9 @@ namespace Kodimax
         public Room roomStandar;
         public Room roomVIP;
         public Room roomPremium;
+        public Autocine autocineS;
+        public Autocine autocineV;
+        public Autocine autocineP;
 
         public Movie()
         {
@@ -37,6 +40,11 @@ namespace Kodimax
             roomStandar.AddRoom();
             roomPremium.AddRoom();
             roomVIP.AddRoom();
+
+            autocineS = new Autocine(4.55, "Estandar", 0.50, 64);
+            autocineP = new Autocine(5.75, "Premium", 1, 30);
+            autocineV = new Autocine(7.5, "VIP", 2.5, 25);
+
         }
     }
 }
